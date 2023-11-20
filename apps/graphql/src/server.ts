@@ -4,7 +4,6 @@ import { createYoga, useReadinessCheck } from 'graphql-yoga';
 import { PubSub } from 'graphql-subscriptions';
 import { stringPath } from '@pothos/plugin-smart-subscriptions';
 
-import { checkDbAvailable } from './db';
 import { User } from './schemas/Auth';
 import { schema } from './schema';
 import { ContextType } from './types';
@@ -49,18 +48,9 @@ const yoga = createYoga({
       logSub: (action, name) => void console.log(`${action} ${name}`),
     }),
   }),
-  plugins: [
-    useReadinessCheck({
-      endpoint: '/ready',
-      check: async () => {
-        const check = await checkDbAvailable();
-        return check;
-      },
-    }),
-  ],
 });
 const server = createServer(yoga);
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(3000); 
 
 server.listen(port, () => {
   console.info(`Server is running on http://localhost:${port}`);

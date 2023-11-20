@@ -15,27 +15,27 @@ generator pothos {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  firstName String
-  lastName  String
-  posts     Post[]
-  comments  Comment[]
+  id           String    @id @unique
+
+  auth_session Session[]
+  key          Key[]
 }
 
-model Post {
-  id       Int       @id @default(autoincrement())
-  title    String
-  content  String
-  author   User      @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  authorId Int
+model Session {
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
 }
 
-model Comment {
-  id       Int    @id @default(autoincrement())
-  comment  String
-  author   User   @relation(fields: [authorId], references: [id])
-  post     Post   @relation(fields: [postId], references: [id])
-  authorId Int
-  postId   Int
+model Key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
 }

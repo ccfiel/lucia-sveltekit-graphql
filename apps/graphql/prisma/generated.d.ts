@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Prisma, User, Post, Comment } from "/Users/chrisianfiel/Projects/youstamp-server/node_modules/@prisma/client";
+import type { Prisma, User, Session, Key } from "/Users/chrisianfiel/lucia-sveltekit-graphql/node_modules/.pnpm/@prisma+client@5.6.0_prisma@5.6.0/node_modules/@prisma/client";
 export default interface PrismaTypes {
     User: {
         Name: "User";
@@ -11,62 +11,54 @@ export default interface PrismaTypes {
         Where: Prisma.UserWhereInput;
         Create: Prisma.UserCreateInput;
         Update: Prisma.UserUpdateInput;
-        RelationName: "posts" | "comments";
-        ListRelations: "posts" | "comments";
+        RelationName: "auth_session" | "key";
+        ListRelations: "auth_session" | "key";
         Relations: {
-            posts: {
-                Shape: Post[];
-                Name: "Post";
+            auth_session: {
+                Shape: Session[];
+                Name: "Session";
             };
-            comments: {
-                Shape: Comment[];
-                Name: "Comment";
+            key: {
+                Shape: Key[];
+                Name: "Key";
             };
         };
     };
-    Post: {
-        Name: "Post";
-        Shape: Post;
-        Include: Prisma.PostInclude;
-        Select: Prisma.PostSelect;
-        OrderBy: Prisma.PostOrderByWithRelationInput;
-        WhereUnique: Prisma.PostWhereUniqueInput;
-        Where: Prisma.PostWhereInput;
-        Create: Prisma.PostCreateInput;
-        Update: Prisma.PostUpdateInput;
-        RelationName: "author" | "comments";
-        ListRelations: "comments";
-        Relations: {
-            author: {
-                Shape: User;
-                Name: "User";
-            };
-            comments: {
-                Shape: Comment[];
-                Name: "Comment";
-            };
-        };
-    };
-    Comment: {
-        Name: "Comment";
-        Shape: Comment;
-        Include: Prisma.CommentInclude;
-        Select: Prisma.CommentSelect;
-        OrderBy: Prisma.CommentOrderByWithRelationInput;
-        WhereUnique: Prisma.CommentWhereUniqueInput;
-        Where: Prisma.CommentWhereInput;
-        Create: Prisma.CommentCreateInput;
-        Update: Prisma.CommentUpdateInput;
-        RelationName: "author" | "post";
+    Session: {
+        Name: "Session";
+        Shape: Session;
+        Include: Prisma.SessionInclude;
+        Select: Prisma.SessionSelect;
+        OrderBy: Prisma.SessionOrderByWithRelationInput;
+        WhereUnique: Prisma.SessionWhereUniqueInput;
+        Where: Prisma.SessionWhereInput;
+        Create: Prisma.SessionCreateInput;
+        Update: Prisma.SessionUpdateInput;
+        RelationName: "user";
         ListRelations: never;
         Relations: {
-            author: {
+            user: {
                 Shape: User;
                 Name: "User";
             };
-            post: {
-                Shape: Post;
-                Name: "Post";
+        };
+    };
+    Key: {
+        Name: "Key";
+        Shape: Key;
+        Include: Prisma.KeyInclude;
+        Select: Prisma.KeySelect;
+        OrderBy: Prisma.KeyOrderByWithRelationInput;
+        WhereUnique: Prisma.KeyWhereUniqueInput;
+        Where: Prisma.KeyWhereInput;
+        Create: Prisma.KeyCreateInput;
+        Update: Prisma.KeyUpdateInput;
+        RelationName: "user";
+        ListRelations: never;
+        Relations: {
+            user: {
+                Shape: User;
+                Name: "User";
             };
         };
     };
