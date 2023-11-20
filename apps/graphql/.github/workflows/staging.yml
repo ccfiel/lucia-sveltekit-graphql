@@ -1,0 +1,66 @@
+name: GraphQL Server Staging
+run-name: ${{ github.actor }} is building GraphQL Server Staging 🚀
+on: 
+  push:
+    branches:
+      - 'stage/**'
+      - 'hotfix/**'  
+jobs:
+  Build-Staging-GraphQL-Server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0           
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Get Latest Tag and Build
+        run: |
+            BRANCH_NAME=$(git branch --show-current)
+            IFS='/'
+            read -a strarr <<< "$BRANCH_NAME"
+            TAG=${strarr[1]}
+            VERSION=$TAG npm run version
+      - run: tail src/schemas/Version/queries.ts
+      - run: npm run build  
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY }}
+          username: ccfiel
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ secrets.REGISTRY }}/${{ github.repository }}
+          tags: |
+            ${{ steps.latest-tag.outputs.tag }}
+            staging
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: Deploy to Northflank (production)
+        run: |
+          curl -X GET https://api-internal.northflank.com/webhooks/release-flows/${{ secrets.NF_WEB_HOOK_STAGING }}?sha=${{ github.sha }}
+  
+
+  
+          
+
+
+
+
+
+
+
+
+        
+
+
